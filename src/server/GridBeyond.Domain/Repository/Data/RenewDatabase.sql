@@ -1,0 +1,3 @@
+USE GridBeyondMarketAnalysis
+
+TRUNCATE TABLE MarketData

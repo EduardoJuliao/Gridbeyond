@@ -1,10 +1,9 @@
 using System;
 
-namespace GridBeyond.Domain.Entities
+namespace GridBeyond.Domain.Models
 {
-    public class Data
+    public class InsertDataModel
     {
-        public int Id { get; set; }
         public DateTime Date { get; set; }
         public double MarketpriceEX1 { get; set; }
     }
