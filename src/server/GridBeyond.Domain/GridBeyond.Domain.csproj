@@ -9,5 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EventArgs\" />
+    <Folder Include="Interfaces\Events" />
   </ItemGroup>
 </Project>

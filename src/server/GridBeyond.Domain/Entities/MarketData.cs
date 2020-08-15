@@ -2,7 +2,7 @@ using System;
 
 namespace GridBeyond.Domain.Entities
 {
-    public class Data
+    public class MarketData
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }

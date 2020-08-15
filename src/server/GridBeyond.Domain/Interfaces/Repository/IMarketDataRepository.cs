@@ -4,7 +4,7 @@ using GridBeyond.Domain.Models;
 
 namespace GridBeyond.Domain.Interfaces.Repository
 {
-    public interface IDataRepository
+    public interface IMarketDataRepository
     {
         Task<IEnumerable<DataModel>> Get();
         Task Insert(IEnumerable<InsertDataModel> models);

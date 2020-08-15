@@ -13,7 +13,6 @@ namespace GridBeyond.Domain.Interfaces.Services
         Task InsertMultiple(IEnumerable<InsertDataModel> models);
         Task<ValidationResult> ValidData(List<string> data);
 
-        event EventHandler<int> OnMalformedRecord;
-        event EventHandler<ValidRecordEventArgs> OnValidRecord;
+        void AddOnMalformedRecordEvent(EventHandler<int> callback);
     }
 }

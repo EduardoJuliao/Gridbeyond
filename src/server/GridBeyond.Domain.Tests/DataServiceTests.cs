@@ -15,7 +15,7 @@ namespace GridBeyond.Domain.Tests
         [SetUp]
         public void SetUp()
         {
-            var mock = new Moq.Mock<IDataRepository>();
+            var mock = new Moq.Mock<IMarketDataRepository>();
 
             
             _service = new MarketDataService(mock.Object);
@@ -47,7 +47,7 @@ namespace GridBeyond.Domain.Tests
             // Arrange
             var malformedCount = 0;
 
-            _service.OnMalformedRecord += (sender, recordLine) => { malformedCount++; };
+            _service.AddOnMalformedRecordEvent((sender, recordLine) => { malformedCount++; });
 
             var data = new List<string>
             {
