@@ -9,40 +9,43 @@ using GridBeyond.Domain.Models;
 
 namespace GridBeyond.Domain.Services
 {
-    public class DataService : IDataService
+    public class MarketDataService : IMarketDataService
     {
         public event EventHandler<int> OnMalformedRecord;
         public event EventHandler<ValidRecordEventArgs> OnValidRecord;
+        public event EventHandler<IEnumerable<InsertDataModel>> OnInsertRecord;
 
         private readonly IDataRepository _repository;
 
-        public DataService(IDataRepository repository)
+        public MarketDataService(IDataRepository repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public Task<IEnumerable<DataModel>> GetAllData()
+        public async Task<IEnumerable<DataModel>> GetAllData()
         {
-            throw new System.NotImplementedException();
+            return await _repository.Get();
         }
 
-        public Task InsertMultiple(IEnumerable<InsertDataModel> models)
+        public async Task InsertMultiple(IEnumerable<InsertDataModel> models)
         {
-            throw new System.NotImplementedException();
+                await _repository.Insert(models);
+                OnInsertRecord?.Invoke(this, models);
         }
 
-        public Task InsertRecord(InsertDataModel model)
+        public async Task InsertRecord(InsertDataModel model)
         {
-            throw new System.NotImplementedException();
+            await _repository.Insert(model);
+            OnInsertRecord?.Invoke(this, new List<InsertDataModel> {model});
         }
 
         public Task<ValidationResult> ValidData(List<string> data)
         {
             var result = new ValidationResult();
 
-            foreach (var record in data.Select((value, i) => new { i, value }))
+            foreach (var record in data.Select((value, i) => new {i, value}))
             {
-                if (IsValid(record.value, out DateTime date, out double marketPrice))
+                if (IsValid(record.value, out var date, out var marketPrice))
                 {
                     var validRecord = new InsertDataModel
                     {
@@ -66,7 +69,7 @@ namespace GridBeyond.Domain.Services
             return Task.FromResult(result);
         }
 
-        private bool IsValid(string value, out DateTime date, out double marketPrice)
+        private static bool IsValid(string value, out DateTime date, out double marketPrice)
         {
             date = default;
             marketPrice = default;
@@ -75,12 +78,8 @@ namespace GridBeyond.Domain.Services
 
             if (split.Length != 2)
                 return false;
-            if (!DateTime.TryParse(split[0], out date))
-                return false;
-            if (!double.TryParse(split[1], out marketPrice))
-                return false;
 
-            return true;
+            return DateTime.TryParse(split[0], out date) && double.TryParse(split[1], out marketPrice);
         }
     }
 }

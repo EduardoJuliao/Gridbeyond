@@ -6,7 +6,7 @@ using GridBeyond.Domain.Models;
 
 namespace GridBeyond.Domain.Interfaces.Services
 {
-    public interface IDataService
+    public interface IMarketDataService
     {
         Task<IEnumerable<DataModel>> GetAllData();
         Task InsertRecord(InsertDataModel model);

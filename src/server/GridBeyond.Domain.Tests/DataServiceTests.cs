@@ -10,7 +10,7 @@ namespace GridBeyond.Domain.Tests
 {
     public class DataServiceTests
     {
-        private IDataService _service;
+        private IMarketDataService _service;
 
         [SetUp]
         public void SetUp()
@@ -18,7 +18,7 @@ namespace GridBeyond.Domain.Tests
             var mock = new Moq.Mock<IDataRepository>();
 
             
-            _service = new DataService(mock.Object);
+            _service = new MarketDataService(mock.Object);
         }
 
         [Test]
