@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GridBeyond.Domain.Entities;
@@ -9,8 +10,9 @@ namespace GridBeyond.Domain.Interfaces.Repository
 {
     public interface IMarketDataRepository
     {
-        Task<IEnumerable<DataModel>> Get();
-        Task<IEnumerable<DataModel>> Get(Expression<Func<MarketData, bool>> expression);
+        IQueryable<DataModel> Get();
+        IQueryable<DataModel> Get(Expression<Func<MarketData, bool>> expression);
+        bool Exists(Expression<Func<MarketData, bool>> expression);
         Task Insert(IEnumerable<InsertDataModel> models);
         Task Insert(InsertDataModel models);
     }

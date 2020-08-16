@@ -6,6 +6,6 @@ namespace GridBeyond.Domain.Entities
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public double MarketpriceEX1 { get; set; }
+        public double MarketPriceEX1 { get; set; }
     }
 }

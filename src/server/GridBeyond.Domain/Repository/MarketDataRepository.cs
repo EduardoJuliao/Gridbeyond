@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GridBeyond.Domain.Entities;
 using GridBeyond.Domain.Interfaces.Repository;
 using GridBeyond.Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace GridBeyond.Domain.Repository
 {
@@ -19,25 +18,29 @@ namespace GridBeyond.Domain.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
         
-        public async Task<IEnumerable<DataModel>> Get()
+        public IQueryable<DataModel> Get()
         {
-            return await _context.MarketDatas.Select(x => new DataModel
+            return _context.MarketDatas.Select(x => new DataModel
             {
                 Date = x.Date,
-                MarketpriceEX1 = x.MarketpriceEX1
-            }).ToListAsync();
+                MarketPriceEX1 = x.MarketPriceEX1
+            });
         }
 
-        public async Task<IEnumerable<DataModel>> Get(Expression<Func<MarketData, bool>> expression)
+        public IQueryable<DataModel> Get(Expression<Func<MarketData, bool>> expression)
         {
-            return await _context.MarketDatas
+            return _context.MarketDatas
                 .Where(expression)
                 .Select(x => new DataModel
                 {
                     Date = x.Date,
-                    MarketpriceEX1 = x.MarketpriceEX1
-                })
-                .ToListAsync();
+                    MarketPriceEX1 = x.MarketPriceEX1
+                });
+        }
+
+        public bool Exists(Expression<Func<MarketData, bool>> expression)
+        {
+            return _context.MarketDatas.Any(expression);
         }
 
         public async Task Insert(IEnumerable<InsertDataModel> models)
@@ -45,7 +48,7 @@ namespace GridBeyond.Domain.Repository
             await _context.MarketDatas.AddRangeAsync(models.Select(x => new MarketData
             {
                 Date = x.Date,
-                MarketpriceEX1 = x.MarketpriceEX1
+                MarketPriceEX1 = x.MarketPriceEX1
             }));
 
             await _context.SaveChangesAsync();
@@ -56,7 +59,7 @@ namespace GridBeyond.Domain.Repository
             await _context.MarketDatas.AddAsync(new MarketData
             {
                 Date = model.Date,
-                MarketpriceEX1 = model.MarketpriceEX1
+                MarketPriceEX1 = model.MarketPriceEX1
             });
             await _context.SaveChangesAsync();
         }

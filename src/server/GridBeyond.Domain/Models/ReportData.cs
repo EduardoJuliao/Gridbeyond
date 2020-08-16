@@ -8,6 +8,6 @@ namespace GridBeyond.Domain.Models
         public double HighestValue { get; set; }
         public DateTime LowestValueDate { get; set; }
         public double LowestValue { get; set; }
-        public double AvarageValue { get; set; }
+        public double AverageValue { get; set; }
     }
 }
