@@ -6,6 +6,7 @@ using GridBeyond.Domain.Services;
 using GridBeyond.Service.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,11 +42,12 @@ namespace GridBeyond.Service
 
                 return service;
             });
+            
+            services.AddDbContext<MarketContext>(opt => opt.UseInMemoryDatabase(databaseName: "GridBeyond_Market"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env
-            , IMarketDataService marketService, IMarketDataHub mdhub)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

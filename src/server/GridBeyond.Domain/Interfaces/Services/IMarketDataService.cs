@@ -14,5 +14,7 @@ namespace GridBeyond.Domain.Interfaces.Services
         Task<ValidationResult> ValidData(List<string> data);
 
         void AddOnMalformedRecordEvent(EventHandler<int> callback);
+        void AddOnValidRecord(EventHandler<ValidRecordEventArgs> callback);
+        void AddOnInsertedRecord(EventHandler<IEnumerable<InsertDataModel>> callback);
     }
 }

@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 using GridBeyond.Domain.EventArgs;
 using GridBeyond.Domain.Interfaces.Repository;
 using GridBeyond.Domain.Interfaces.Services;
+using GridBeyond.Domain.Internationalization;
 using GridBeyond.Domain.Models;
 
 namespace GridBeyond.Domain.Services
 {
     public class MarketDataService : IMarketDataService
     {
-
-        readonly IMarketDataRepository _repository;
-        event EventHandler<int> OnMalformedRecord;
-        event EventHandler<ValidRecordEventArgs> OnValidRecord;
-        event EventHandler<IEnumerable<InsertDataModel>> OnInsertRecord;
+        private readonly IMarketDataRepository _repository;
+        private event EventHandler<int> OnMalformedRecord;
+        private event EventHandler<ValidRecordEventArgs> OnValidRecord;
+        private event EventHandler<IEnumerable<InsertDataModel>> OnInsertRecord;
 
         public MarketDataService(IMarketDataRepository repository)
         {
@@ -30,13 +30,13 @@ namespace GridBeyond.Domain.Services
         public async Task InsertMultiple(IEnumerable<InsertDataModel> models)
         {
                 await _repository.Insert(models);
-                //_events.OnInsertRecord.Invoke(this, models);
+                OnInsertRecord?.Invoke(this, models);
         }
 
         public async Task InsertRecord(InsertDataModel model)
         {
             await _repository.Insert(model);
-            //OnInsertRecord?.Invoke(this, new List<InsertDataModel> {model});
+            OnInsertRecord?.Invoke(this, new List<InsertDataModel> {model});
         }
 
         public Task<ValidationResult> ValidData(List<string> data)
@@ -52,11 +52,11 @@ namespace GridBeyond.Domain.Services
                         Date = date,
                         MarketpriceEX1 = marketPrice
                     };
-                    // OnValidRecord?.Invoke(this, new ValidRecordEventArgs
-                    // {
-                    //     InsertData = validRecord,
-                    //     Row = record.i
-                    // });
+                    OnValidRecord?.Invoke(this, new ValidRecordEventArgs
+                    {
+                        InsertData = validRecord,
+                        Row = record.i
+                    });
                     result.ValidRecord.Add(validRecord);
                 }
                 else
@@ -69,10 +69,12 @@ namespace GridBeyond.Domain.Services
             return Task.FromResult(result);
         }
 
-        public void AddOnMalformedRecordEvent(EventHandler<int> callback)
-        {
-            OnMalformedRecord += callback;
-        }
+        public void AddOnMalformedRecordEvent(EventHandler<int> callback) => OnMalformedRecord += callback;
+
+        public void AddOnValidRecord(EventHandler<ValidRecordEventArgs> callback) => OnValidRecord += callback;
+
+        public void AddOnInsertedRecord(EventHandler<IEnumerable<InsertDataModel>> callback) =>
+            OnInsertRecord += callback;
 
         private static bool IsValid(string value, out DateTime date, out double marketPrice)
         {

@@ -1,60 +1,64 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GridBeyond.Domain.Entities;
 using GridBeyond.Domain.Interfaces.Repository;
-using GridBeyond.Domain.Interfaces.Services;
 using GridBeyond.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GridBeyond.Domain.Repository
 {
     public class MarketDataRepository : IMarketDataRepository
     {
-        private static readonly List<MarketData> _data = new List<MarketData>
-        {
-            new MarketData{Date = DateTime.Now, Id = 1, MarketpriceEX1 = 1234.567d}
-        };
+        private readonly MarketContext _context;
 
+        public MarketDataRepository(MarketContext context)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+        
         public async Task<IEnumerable<DataModel>> Get()
         {
-            return await Task.Run(() =>
+            return await _context.MarketDatas.Select(x => new DataModel
             {
-                return _data.Select(x => new DataModel
+                Date = x.Date,
+                MarketpriceEX1 = x.MarketpriceEX1
+            }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<DataModel>> Get(Expression<Func<MarketData, bool>> expression)
+        {
+            return await _context.MarketDatas
+                .Where(expression)
+                .Select(x => new DataModel
                 {
                     Date = x.Date,
                     MarketpriceEX1 = x.MarketpriceEX1
-                });
-            });
+                })
+                .ToListAsync();
         }
 
         public async Task Insert(IEnumerable<InsertDataModel> models)
         {
-            await Task.Run(() =>
+            await _context.MarketDatas.AddRangeAsync(models.Select(x => new MarketData
             {
-                foreach (var model in models)
-                {
-                    _data.Add(new MarketData
-                    {
-                        Date = model.Date,
-                        Id = _data.Count + 1,
-                        MarketpriceEX1 = model.MarketpriceEX1
-                    });
-                }
-            });
+                Date = x.Date,
+                MarketpriceEX1 = x.MarketpriceEX1
+            }));
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Insert(InsertDataModel model)
         {
-            await Task.Run(() =>
+            await _context.MarketDatas.AddAsync(new MarketData
             {
-                _data.Add(new MarketData
-                {
-                    Date = model.Date,
-                    Id = _data.Count + 1,
-                    MarketpriceEX1 = model.MarketpriceEX1
-                });
+                Date = model.Date,
+                MarketpriceEX1 = model.MarketpriceEX1
             });
+            await _context.SaveChangesAsync();
         }
     }
 }

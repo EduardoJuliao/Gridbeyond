@@ -17,7 +17,6 @@ namespace GridBeyond.Domain.Tests
         {
             var mock = new Moq.Mock<IMarketDataRepository>();
 
-            
             _service = new MarketDataService(mock.Object);
         }
 
@@ -58,10 +57,33 @@ namespace GridBeyond.Domain.Tests
             };
 
             // Act
-            var result = await _service.ValidData(data);
+            await _service.ValidData(data);
 
             // Assert
-            Assert.AreEqual(malformedCount, result.MalformedRecordLine.Count);
+            Assert.AreEqual(3, malformedCount);
+        }
+        
+        [Test]
+        public async Task EventIsCalledForValidRecords()
+        {
+            // Arrange
+            var valid = 0;
+
+            _service.AddOnValidRecord((sender, recordLine) => { valid++; });
+
+            var data = new List<string>
+            {
+                $"{DateTime.Now}, 50",
+                $"{DateTime.Now},",
+                $"{DateTime.Now}, abc",
+                $"{DateTime.Now}",
+            };
+
+            // Act
+            await _service.ValidData(data);
+
+            // Assert
+            Assert.AreEqual(1, valid);
         }
     }
 }
