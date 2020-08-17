@@ -32,9 +32,9 @@ namespace GridBeyond.Domain.Services
         public async Task InsertMultiple(IEnumerable<InsertDataModel> models)
         {
             var newModels = models.Where(x =>
-                !_repository.Exists(y => x.Date == y.Date && x.MarketPriceEX1 == y.MarketPriceEX1))
+                    !_repository.Exists(y => x.Date == y.Date && x.MarketPriceEX1 == y.MarketPriceEX1))
                 .ToArray();
-            
+
             if (newModels.Any())
             {
                 await _repository.Insert(newModels);
@@ -83,30 +83,25 @@ namespace GridBeyond.Domain.Services
 
         public async Task<ReportData> GetReportDataHistory()
         {
-            var c = (from record in _repository.Get()
-                    group record.MarketPriceEX1 by record.Date
-                    into g
-                    select new
-                    {
-                        Date = g.Key,
-                        Values = g.ToList(),
-                        Avarage = g.Average(),
-                        Max = g.Max(),
-                        Min = g.Min(),
-                        AvarageTotal = g.Average(),
-                        MaxTotal = g.Max(),
-                        MinTotal = g.Min()
-                    })
-                .Select(x => new ReportData
+            var query = (from record in _repository.Get()
+                group record.MarketPriceEX1 by record.Date
+                into g
+                select new
                 {
-                    AverageValue = x.AvarageTotal,
-                    HighestValue = x.MaxTotal,
-                    LowestValue = x.MinTotal,
-                })
-                .ToListAsync();
+                    Date = g.Key,
+                    Avarage = g.Average(),
+                    Max = g.Max(),
+                    Min = g.Min(),
+                }).ToList();
 
-
-            throw new NotImplementedException();
+            return new ReportData
+            {
+                AverageValue = query.Average(x => x.Avarage),
+                HighestValue = query.Max(x => x.Max),
+                LowestValue = query.Min(x => x.Min),
+                LowestValueDate = query.Single(x => x.Min == query.Min(y => y.Min)).Date,
+                HighestValueDate = query.Single(x => x.Max == query.Max(y => y.Max)).Date
+            };
         }
 
         public Task<ReportData> GetReportDataPeriod(DateTime start, DateTime? end)
