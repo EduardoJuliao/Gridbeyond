@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -51,7 +52,7 @@ namespace GridBeyond.Domain.Services
             }
         }
 
-        public Task<ValidationResult> ValidData(IEnumerable<string> data)
+        public async Task<ValidationResult> ValidData(IEnumerable<string> data)
         {
             var result = new ValidationResult();
 
@@ -78,7 +79,7 @@ namespace GridBeyond.Domain.Services
                 }
             }
 
-            return Task.FromResult(result);
+            return await Task.FromResult(result);
         }
 
         public async Task<ReportData> GetReportDataHistory()
@@ -125,8 +126,17 @@ namespace GridBeyond.Domain.Services
 
             if (split.Length != 2)
                 return false;
+            
+            var formats = new string []{"dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm","dd/MM/yyyy"};
 
-            return DateTime.TryParse(split[0], out date) && double.TryParse(split[1], out marketPrice);
+            if (!DateTime.TryParseExact(split[0], formats, CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out date))
+                return false;
+
+            if (!double.TryParse(split[1], out marketPrice))
+                return false;
+
+            return true;
         }
     }
 }

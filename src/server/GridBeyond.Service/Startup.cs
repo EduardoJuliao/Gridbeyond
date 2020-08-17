@@ -29,7 +29,7 @@ namespace GridBeyond.Service
             services.AddSignalR();
 
             services.AddSingleton<IMarketDataHub, MarketDataHub>();
-            services.AddSingleton<IMarketDataRepository, MarketDataRepository>();
+            services.AddScoped<IMarketDataRepository, MarketDataRepository>();
             services.AddTransient<IMarketDataService, MarketDataService>(provider =>
             {
                 var repo = provider.GetService<IMarketDataRepository>();
