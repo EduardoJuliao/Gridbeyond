@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace GridBeyond.Domain.Tests
 {
-    public class DataServiceTests
+    public class MarketDataServiceTests
     {
         private IMarketDataService _service;
 
