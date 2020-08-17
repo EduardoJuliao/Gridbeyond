@@ -39,5 +39,11 @@ namespace GridBeyond.Service.Controllers
                 return BadRequest("Couldn't process the records.");
             }
         }
+        
+        [HttpGet("Report")]
+        public async Task<ReportData> GenerateHistoryReport()
+        {
+            return await _service.GetReportDataHistory();
+        }
     }
 }

@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using GridBeyond.Domain.Entities;
 using GridBeyond.Domain.EventArgs;
 using GridBeyond.Domain.Interfaces.Repository;
 using GridBeyond.Domain.Interfaces.Services;
@@ -84,20 +82,20 @@ namespace GridBeyond.Domain.Services
 
         public async Task<ReportData> GetReportDataHistory()
         {
-            var query = (from record in _repository.Get()
+            var query = await (from record in _repository.Get()
                 group record.MarketPriceEX1 by record.Date
                 into g
-                select new
+                select new ReportDataGroupModel
                 {
                     Date = g.Key,
-                    Avarage = g.Average(),
+                    Average = g.Average(),
                     Max = g.Max(),
                     Min = g.Min(),
-                }).ToList();
+                }).ToListAsync();
 
             return new ReportData
             {
-                AverageValue = query.Average(x => x.Avarage),
+                AverageValue = query.Average(x => x.Average),
                 HighestValue = query.Max(x => x.Max),
                 LowestValue = query.Min(x => x.Min),
                 LowestValueDate = query.Single(x => x.Min == query.Min(y => y.Min)).Date,
@@ -105,9 +103,31 @@ namespace GridBeyond.Domain.Services
             };
         }
 
-        public Task<ReportData> GetReportDataPeriod(DateTime start, DateTime? end)
+        public async Task<ReportData> GetReportDataPeriod(DateTime start, DateTime? end)
         {
-            throw new NotImplementedException();
+            if (!end.HasValue)
+                end = DateTime.Now;
+            
+            var query = await (from record in _repository.Get()
+                where record.Date >= start && record.Date <= end
+                group record.MarketPriceEX1 by record.Date
+                into g
+                select new ReportDataGroupModel
+                {
+                    Date = g.Key,
+                    Average = g.Average(),
+                    Max = g.Max(),
+                    Min = g.Min(),
+                }).ToListAsync();
+
+            return new ReportData
+            {
+                AverageValue = query.Average(x => x.Average),
+                HighestValue = query.Max(x => x.Max),
+                LowestValue = query.Min(x => x.Min),
+                LowestValueDate = query.Single(x => x.Min == query.Min(y => y.Min)).Date,
+                HighestValueDate = query.Single(x => x.Max == query.Max(y => y.Max)).Date
+            };
         }
 
         public void AddOnMalformedRecordEvent(EventHandler<int> callback) => OnMalformedRecord += callback;
