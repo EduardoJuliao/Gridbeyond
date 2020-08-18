@@ -44,6 +44,18 @@ namespace GridBeyond.Service
             });
             
             services.AddDbContext<MarketContext>(opt => opt.UseInMemoryDatabase(databaseName: "GridBeyond_Market"));
+            
+            services.AddCors(options =>
+                    {
+                        options.AddPolicy(name: "MyPolicy",
+                            builder =>
+                            {
+                                builder.WithOrigins(
+                                    "https://localhost:4200",
+                                    "http://localhost:5000")
+                                        .WithMethods("PUT", "DELETE", "GET");
+                            });
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +77,8 @@ namespace GridBeyond.Service
                 endpoints.MapControllers();
                 endpoints.MapHub<MarketDataHub>("/mdhub");
             });
+            
+            app.UseCors();
         }
     }
 }
