@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IReportDataModel } from '../Models/IReportDataModel';
-import { IInsertedRecordsModel } from '../Models/IInsertedRecordsModel';
+// import { IInsertedRecordsModel } from '../Models/IInsertedRecordsModel';
 import { IMarketDataModel } from '../Models/IMarketDataModel';
 
 import clientConfig from '../../../assets/config.json';
@@ -15,14 +15,14 @@ export class MarketDataService {
   }
 
   public GetReportData(): Observable<IReportDataModel> {
-    return this.client.get(`${clientConfig.api.baseUrl}/marketdata/report`);
+    return this.client.get<IReportDataModel>(`${clientConfig.api.baseUrl}/marketdata/report`);
   }
 
-  public GetAllData(): Observable<IMarketDataModel> {
-    return this.client.get(`${clientConfig.api.baseUrl}/marketdata`);
+  public GetAllData(): Observable<IMarketDataModel[]> {
+    return this.client.get<IMarketDataModel[]>(`${clientConfig.api.baseUrl}/marketdata`);
   }
 
-  public InsertRecords(records: string[]): Observable<IInsertedRecordsModel> {
-    return this.client.post(`${clientConfig.api.baseUrl}/marketdata`, records);
-  }
+  // public InsertRecords(records: string[]): Observable<IInsertedRecordsModel> {
+  //   return this.client.post<IInsertedRecordsModel>(`${clientConfig.api.baseUrl}/marketdata`, records);
+  // }
 }
