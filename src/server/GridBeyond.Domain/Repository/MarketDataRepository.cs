@@ -38,6 +38,11 @@ namespace GridBeyond.Domain.Repository
                 });
         }
 
+        public int Count()
+        {
+            return _context.MarketDatas.Count();
+        }
+
         public bool Exists(Expression<Func<MarketData, bool>> expression)
         {
             return _context.MarketDatas.Any(expression);

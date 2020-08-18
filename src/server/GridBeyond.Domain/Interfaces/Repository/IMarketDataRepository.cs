@@ -12,6 +12,7 @@ namespace GridBeyond.Domain.Interfaces.Repository
     {
         IQueryable<DataModel> Get();
         IQueryable<DataModel> Get(Expression<Func<MarketData, bool>> expression);
+        int Count();
         bool Exists(Expression<Func<MarketData, bool>> expression);
         Task Insert(IEnumerable<InsertDataModel> models);
         Task Insert(InsertDataModel models);

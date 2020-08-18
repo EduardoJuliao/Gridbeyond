@@ -28,7 +28,7 @@ namespace GridBeyond.Domain.Services
             return await _repository.Get().ToListAsync();
         }
 
-        public async Task InsertMultiple(IEnumerable<InsertDataModel> models)
+        public async Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models)
         {
             var newModels = models.Where(x =>
                     !_repository.Exists(y => x.Date == y.Date && x.MarketPriceEX1 == y.MarketPriceEX1))
@@ -39,6 +39,8 @@ namespace GridBeyond.Domain.Services
                 await _repository.Insert(newModels);
                 OnInsertRecord?.Invoke(this, newModels);
             }
+
+            return newModels;
         }
 
         public async Task InsertRecord(InsertDataModel model)
@@ -80,6 +82,21 @@ namespace GridBeyond.Domain.Services
             return await Task.FromResult(result);
         }
 
+        private ReportData CreateReport(IList<ReportDataGroupModel> data)
+        {
+            if (!data.Any())
+                return new ReportData();
+            return new ReportData
+            {
+                AverageValue = data.Average(x => x.Average),
+                HighestValue = data.Max(x => x.Max),
+                LowestValue = data.Min(x => x.Min),
+                LowestValueDate = data.Single(x => x.Min == data.Min(y => y.Min)).Date,
+                HighestValueDate = data.Single(x => x.Max == data.Max(y => y.Max)).Date,
+                TotalRecords = _repository.Count()
+            };
+        }
+        
         public async Task<ReportData> GetReportDataHistory()
         {
             var query = await (from record in _repository.Get()
@@ -93,14 +110,7 @@ namespace GridBeyond.Domain.Services
                     Min = g.Min(),
                 }).ToListAsync();
 
-            return new ReportData
-            {
-                AverageValue = query.Average(x => x.Average),
-                HighestValue = query.Max(x => x.Max),
-                LowestValue = query.Min(x => x.Min),
-                LowestValueDate = query.Single(x => x.Min == query.Min(y => y.Min)).Date,
-                HighestValueDate = query.Single(x => x.Max == query.Max(y => y.Max)).Date
-            };
+            return CreateReport(query);
         }
 
         public async Task<ReportData> GetReportDataPeriod(DateTime start, DateTime? end)
@@ -108,8 +118,7 @@ namespace GridBeyond.Domain.Services
             if (!end.HasValue)
                 end = DateTime.Now;
             
-            var query = await (from record in _repository.Get()
-                where record.Date >= start && record.Date <= end
+            var query = await (from record in _repository.Get(x => x.Date >= start && x.Date <= end)
                 group record.MarketPriceEX1 by record.Date
                 into g
                 select new ReportDataGroupModel
@@ -120,14 +129,7 @@ namespace GridBeyond.Domain.Services
                     Min = g.Min(),
                 }).ToListAsync();
 
-            return new ReportData
-            {
-                AverageValue = query.Average(x => x.Average),
-                HighestValue = query.Max(x => x.Max),
-                LowestValue = query.Min(x => x.Min),
-                LowestValueDate = query.Single(x => x.Min == query.Min(y => y.Min)).Date,
-                HighestValueDate = query.Single(x => x.Max == query.Max(y => y.Max)).Date
-            };
+            return CreateReport(query);
         }
 
         public void AddOnMalformedRecordEvent(EventHandler<int> callback) => OnMalformedRecord += callback;

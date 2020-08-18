@@ -24,22 +24,26 @@ namespace GridBeyond.Service.Controllers
         {
             return await _service.GetAllData();
         }
-        
+
         [HttpPost]
-        public async Task<ActionResult> InsertRecords([FromBody]List<string> csv)
+        public async Task<ActionResult> InsertRecords([FromBody] List<string> csv)
         {
             var result = await _service.ValidData(csv);
             if (result.ValidRecord.Any())
             {
-                await _service.InsertMultiple(result.ValidRecord);
-                return Ok();
+                var newRecords = await _service.InsertMultiple(result.ValidRecord);
+                return Ok(new
+                {
+                    ValidRecords = result.ValidRecord, InvalidRecords = result.MalformedRecordLine,
+                    NewRecords = newRecords
+                });
             }
             else
             {
                 return BadRequest("Couldn't process the records.");
             }
         }
-        
+
         [HttpGet("Report")]
         public async Task<ReportData> GenerateHistoryReport()
         {

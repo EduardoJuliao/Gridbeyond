@@ -10,7 +10,7 @@ namespace GridBeyond.Domain.Interfaces.Services
     {
         Task<IEnumerable<DataModel>> GetAllData();
         Task InsertRecord(InsertDataModel model);
-        Task InsertMultiple(IEnumerable<InsertDataModel> models);
+        Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models);
         Task<ValidationResult> ValidData(IEnumerable<string> data);
         Task<ReportData> GetReportDataHistory();
         Task<ReportData> GetReportDataPeriod(DateTime start, DateTime? end);
