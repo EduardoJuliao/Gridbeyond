@@ -19,6 +19,7 @@ export class MarketDataComponent implements OnInit {
   ngOnInit() {
     this.service.GetAllData()
       .subscribe(result => {
+        console.log(result)
         this.chartData = {
           //labels: ["January", "February", "March", "April", "May", "June", "July"],
           datasets: [
