@@ -250,3 +250,12 @@ When the user start the application, it'll receive the report data plus the last
 The user will also have the option to upload files using the web application. When a new file is uploaded to the server, it'll update the report and graph with the latest entries, if any.
 
 ## Running the application
+
+From this folder, run the commands in separate powershell or CMD.
+
+```powershell
+dotnet run --project src/server/GridBeyond.Service
+npm --prefix src/client/gridbeyond-angular-client start
+```
+
+The first command will start the server side of the application, while the second, will start the web application.
