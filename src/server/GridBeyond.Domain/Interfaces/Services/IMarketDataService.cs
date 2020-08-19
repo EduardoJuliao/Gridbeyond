@@ -9,6 +9,7 @@ namespace GridBeyond.Domain.Interfaces.Services
     public interface IMarketDataService
     {
         Task<IEnumerable<DataModel>> GetAllData();
+        Task<IEnumerable<DataModel>> GetLatest();
         Task InsertRecord(InsertDataModel model);
         Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models);
         Task<ValidationResult> ValidData(IEnumerable<string> data);

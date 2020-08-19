@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GridBeyond.Domain.Interfaces.Services;
 using GridBeyond.Domain.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GridBeyond.Service.Controllers
@@ -23,6 +24,12 @@ namespace GridBeyond.Service.Controllers
         public async Task<IEnumerable<DataModel>> GetMarketData()
         {
             return await _service.GetAllData();
+        }
+        
+        [HttpGet("latest")]
+        public async Task<IEnumerable<DataModel>> GetLatestMarketData()
+        {
+            return await _service.GetLatest();
         }
 
         [HttpPost]

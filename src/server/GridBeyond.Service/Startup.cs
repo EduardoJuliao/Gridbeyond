@@ -25,6 +25,8 @@ namespace GridBeyond.Service
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+            services.AddMvc();
             services.AddControllers();
             services.AddSignalR();
 
@@ -34,28 +36,13 @@ namespace GridBeyond.Service
             {
                 var repo = provider.GetService<IMarketDataRepository>();
                 var service = new MarketDataService(repo);
-                
-                service.AddOnMalformedRecordEvent((sender, i) =>
-                {
-                    
-                });
+
+                service.AddOnMalformedRecordEvent((sender, i) => { });
 
                 return service;
             });
-            
+
             services.AddDbContext<MarketContext>(opt => opt.UseInMemoryDatabase(databaseName: "GridBeyond_Market"));
-            
-            services.AddCors(options =>
-                    {
-                        options.AddPolicy(name: "MyPolicy",
-                            builder =>
-                            {
-                                builder.WithOrigins(
-                                    "https://localhost:4200",
-                                    "http://localhost:5000")
-                                        .WithMethods("PUT", "DELETE", "GET");
-                            });
-                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +50,10 @@ namespace GridBeyond.Service
         {
             if (env.IsDevelopment())
             {
+                app.UseCors(builder =>
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
                 app.UseDeveloperExceptionPage();
             }
 
@@ -77,8 +68,6 @@ namespace GridBeyond.Service
                 endpoints.MapControllers();
                 endpoints.MapHub<MarketDataHub>("/mdhub");
             });
-            
-            app.UseCors();
         }
     }
 }

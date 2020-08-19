@@ -27,6 +27,12 @@ namespace GridBeyond.Domain.Services
         {
             return await _repository.Get().ToListAsync();
         }
+        
+        public async Task<IEnumerable<DataModel>> GetLatest()
+        {
+            return (await _repository.Get().OrderByDescending(x=> x.Date).Take(50).ToListAsync())
+                .OrderBy(x => x.Date);
+        }
 
         public async Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models)
         {

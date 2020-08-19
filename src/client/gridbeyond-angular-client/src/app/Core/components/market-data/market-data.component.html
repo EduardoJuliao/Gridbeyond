@@ -1,1 +1,34 @@
+<div>
+  <input type="file" accept=".csv" (change)="fileChanged($event)" />
+  <button (click)="sendFile()">Send</button>
+</div>
+
+
+<div class="marketData">
+  <div class="marketDataInfo">
+    <b>Average Value: </b>
+    <div>{{reportData.averageValue}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>Highest Value:</b>
+    <div>{{reportData.highestValue}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>When reached Highest Value:</b>
+    <div>{{reportData.highestValueDate| date: dateFormat}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>Lowest Value:</b>
+    <div>{{reportData.lowestValue}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>When reached Lowest Value:</b>
+    <div>{{reportData.lowestValueDate | date: dateFormat}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>Total Records:</b>
+    <div>{{reportData.totalRecords}}</div>
+  </div>
+</div>
+
 <chart type="line" [data]="chartData" [options]="options"></chart>

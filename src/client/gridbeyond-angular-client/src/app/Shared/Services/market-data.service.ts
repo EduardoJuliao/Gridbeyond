@@ -6,6 +6,7 @@ import { IReportDataModel } from '../Models/IReportDataModel';
 import { IMarketDataModel } from '../Models/IMarketDataModel';
 
 import clientConfig from '../../../assets/config.json';
+import { IInsertedRecordsModel } from '../Models/IInsertedRecordsModel';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,11 @@ export class MarketDataService {
     return this.client.get<IMarketDataModel[]>(`${clientConfig.api.baseUrl}/marketdata`);
   }
 
-  // public InsertRecords(records: string[]): Observable<IInsertedRecordsModel> {
-  //   return this.client.post<IInsertedRecordsModel>(`${clientConfig.api.baseUrl}/marketdata`, records);
-  // }
+  public GetLatestData(): Observable<IMarketDataModel[]> {
+    return this.client.get<IMarketDataModel[]>(`${clientConfig.api.baseUrl}/marketdata/latest`);
+  }
+
+  public InsertRecords(records: string[]): Observable<IInsertedRecordsModel> {
+    return this.client.post<IInsertedRecordsModel>(`${clientConfig.api.baseUrl}/marketdata`, records);
+  }
 }
