@@ -30,9 +30,11 @@ namespace GridBeyond.Service
             services.AddControllers();
             services.AddSignalR();
 
+            services.AddTransient<IMarketDataRepository, MarketDataRepository>();
+            services.AddTransient<IProcessHistoryRepository, ProcessHistoryRepository>();
+            
             services.AddSingleton<IMarketDataHub, MarketDataHub>();
-            services.AddScoped<IMarketDataRepository, MarketDataRepository>();
-            services.AddScoped<IProcessHistoryRepository, ProcessHistoryRepository>();
+            
             services.AddSingleton<IProcessHistoryService, ProcessHistoryService>();
             services.AddTransient<IMarketDataService, MarketDataService>(provider =>
             {
@@ -44,7 +46,8 @@ namespace GridBeyond.Service
                 return service;
             });
 
-            services.AddDbContext<MarketContext>(opt => opt.UseInMemoryDatabase(databaseName: "GridBeyond_Market"));
+            services.AddDbContext<MarketContext>(opt => 
+                opt.UseInMemoryDatabase(databaseName: "GridBeyond_Market"),ServiceLifetime.Singleton);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
