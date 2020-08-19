@@ -32,6 +32,8 @@ namespace GridBeyond.Service
 
             services.AddSingleton<IMarketDataHub, MarketDataHub>();
             services.AddScoped<IMarketDataRepository, MarketDataRepository>();
+            services.AddScoped<IProcessHistoryRepository, ProcessHistoryRepository>();
+            services.AddSingleton<IProcessHistoryService, ProcessHistoryService>();
             services.AddTransient<IMarketDataService, MarketDataService>(provider =>
             {
                 var repo = provider.GetService<IMarketDataRepository>();

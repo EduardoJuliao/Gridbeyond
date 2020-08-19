@@ -14,10 +14,13 @@ namespace GridBeyond.Service.Controllers
     public class MarketDataController : ControllerBase
     {
         private readonly IMarketDataService _service;
+        private readonly IProcessHistoryService _processHistoryService;
 
-        public MarketDataController(IMarketDataService service)
+        public MarketDataController(IMarketDataService service,
+            IProcessHistoryService processHistoryService)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
+            _processHistoryService = processHistoryService ?? throw new ArgumentNullException(nameof(processHistoryService));
         }
 
         [HttpGet]
@@ -39,6 +42,9 @@ namespace GridBeyond.Service.Controllers
             if (result.ValidRecord.Any())
             {
                 var newRecords = await _service.InsertMultiple(result.ValidRecord);
+                await _processHistoryService.SaveProcess(result.ValidRecord.Count,
+                    result.MalformedRecordLine.Count, newRecords.Length,
+                    csv.Count);
                 return Ok(new
                 {
                     ValidRecords = result.ValidRecord, InvalidRecords = result.MalformedRecordLine,

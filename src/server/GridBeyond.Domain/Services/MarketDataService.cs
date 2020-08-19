@@ -40,11 +40,10 @@ namespace GridBeyond.Domain.Services
                     !_repository.Exists(y => x.Date == y.Date && x.MarketPriceEX1 == y.MarketPriceEX1))
                 .ToArray();
 
-            if (newModels.Any())
-            {
-                await _repository.Insert(newModels);
-                OnInsertRecord?.Invoke(this, newModels);
-            }
+            if (!newModels.Any()) return newModels;
+            
+            await _repository.Insert(newModels);
+            OnInsertRecord?.Invoke(this, newModels);
 
             return newModels;
         }

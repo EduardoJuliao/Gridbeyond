@@ -11,5 +11,6 @@ namespace GridBeyond.Domain.Repository
         }
 
         public DbSet<MarketData> MarketDatas { get; set; } 
+        public DbSet<ProcessHistory> ProcessHistories { get; set; }
     }
 }
