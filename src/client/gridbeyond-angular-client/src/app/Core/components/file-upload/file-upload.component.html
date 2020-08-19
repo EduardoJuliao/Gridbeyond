@@ -1,0 +1,6 @@
+<div class="box">
+  <input type="file" #marketFileInput id="marketFileInput" class="inputfile inputfile-1" (change)="fileChanged($event)"
+    accept=".csv" />
+  <label for="marketFileInput"><span>{{fileUploadText}}</span></label>
+  <button (click)="sendFile()">Send</button>
+</div>

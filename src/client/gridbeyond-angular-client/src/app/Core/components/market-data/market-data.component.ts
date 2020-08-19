@@ -1,3 +1,4 @@
+import { MarketDataComponentNotifierService } from './../../../Shared/Services/market-data-component-notifier.service';
 import { IReportDataModel } from './../../../Shared/Models/IReportDataModel';
 import { IMarketDataModel } from './../../../Shared/Models/IMarketDataModel';
 import { MarketDataService } from './../../../Shared/Services/market-data.service';
@@ -11,7 +12,7 @@ import { DatePipe } from '@angular/common';
 })
 export class MarketDataComponent implements OnInit {
 
-  private file: any;
+
   chartData = {};
   reportData = {};
   readonly dateFormat: string = 'dd/MM/yyyy hh:mm:ss';
@@ -21,12 +22,16 @@ export class MarketDataComponent implements OnInit {
     maintainAspectRatio: false
   };
   constructor(private service: MarketDataService,
-    private datePipe: DatePipe) {
+    private datePipe: DatePipe,
+    private notifier: MarketDataComponentNotifierService) {
 
   }
 
   ngOnInit() {
     this.populate();
+    this.notifier.currentData.subscribe(() => {
+      this.populate();
+    });
   }
 
   populate() {
@@ -47,22 +52,5 @@ export class MarketDataComponent implements OnInit {
       .subscribe(result => {
         this.reportData = result;
       });
-  }
-
-  fileChanged(e) {
-    this.file = e.target.files[0];
-  }
-
-  sendFile() {
-    let fileReader = new FileReader();
-    fileReader.onload = (e) => {
-      let lines = fileReader.result.toString().split('\r\n');
-      this.service.InsertRecords(lines)
-        .subscribe((result) => {
-          console.log(result);
-          this.populate();
-        });
-    }
-    fileReader.readAsText(this.file);
   }
 }
