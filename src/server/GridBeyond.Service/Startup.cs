@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.IO;
 using GridBeyond.Domain.Interfaces.Repository;
 using GridBeyond.Domain.Interfaces.Services;
 using GridBeyond.Domain.Repository;
@@ -32,9 +34,9 @@ namespace GridBeyond.Service
 
             services.AddTransient<IMarketDataRepository, MarketDataRepository>();
             services.AddTransient<IProcessHistoryRepository, ProcessHistoryRepository>();
-            
+
             services.AddSingleton<IMarketDataHub, MarketDataHub>();
-            
+
             services.AddSingleton<IProcessHistoryService, ProcessHistoryService>();
             services.AddTransient<IMarketDataService, MarketDataService>(provider =>
             {
@@ -46,8 +48,24 @@ namespace GridBeyond.Service
                 return service;
             });
 
-            services.AddDbContext<MarketContext>(opt => 
-                opt.UseInMemoryDatabase(databaseName: "GridBeyond_Market"),ServiceLifetime.Singleton);
+            var databaseMode = Configuration.GetSection("Database").GetValue<DatabaseMode>("Mode");
+
+            if (databaseMode == DatabaseMode.MEMORY)
+            {
+                services.AddDbContext<MarketContext>(opt =>
+                    opt.UseInMemoryDatabase(databaseName: "GridBeyond_Market"), ServiceLifetime.Singleton);
+            }
+            else if (databaseMode == DatabaseMode.SERVER)
+            {
+                var connectionString = Configuration.GetSection("Database").GetValue<string>("ConnectionString");
+                services.AddDbContext<MarketContext>(opt =>
+                    opt.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+            }
+            else
+            {
+                throw new System.Exception("Invalid configuration file. Missing Database:Mode");
+            }
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
