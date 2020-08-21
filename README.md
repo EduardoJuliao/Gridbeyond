@@ -256,6 +256,7 @@ The user will also have the option to upload files using the web application. Wh
 ## Running the application
 
 From this folder, run the commands in separate powershell or CMD.
+
 If `Powershell`:
 
 ```powershell
