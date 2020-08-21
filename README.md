@@ -213,6 +213,10 @@ Both endpoints returns the same data:
 }
 ```
 
+#### Data
+
+The SQL Scripts can be found under the `DATA` folder in the root directory.
+
 ### Client Side
 
 The are to application developed to interact with the user:
