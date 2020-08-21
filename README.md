@@ -168,7 +168,7 @@ This endpoint will return:
 
 #### Getting data
 
-##### Latest
+#### Latest
 
 There's an endpoint to get all data stored in the data base.
 
@@ -252,10 +252,18 @@ The user will also have the option to upload files using the web application. Wh
 ## Running the application
 
 From this folder, run the commands in separate powershell or CMD.
+If `Powershell`:
 
 ```powershell
 dotnet run --project src/server/GridBeyond.Service
-npm --prefix src/client/gridbeyond-angular-client start
+cd src/client/gridbeyond-angular-client; npm i; ng serve -o
+```
+
+If CMD:
+
+```CMD
+dotnet run --project src/server/GridBeyond.Service
+cd src/client/gridbeyond-angular-client && npm i && ng serve -o
 ```
 
 The first command will start the server side of the application, while the second, will start the web application.
