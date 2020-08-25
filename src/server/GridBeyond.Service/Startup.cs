@@ -38,10 +38,12 @@ namespace GridBeyond.Service
             services.AddSingleton<IMarketDataHub, MarketDataHub>();
 
             services.AddSingleton<IProcessHistoryService, ProcessHistoryService>();
+            services.AddSingleton<ICacheRepository, CacheRepository>();
             services.AddTransient<IMarketDataService, MarketDataService>(provider =>
             {
                 var repo = provider.GetService<IMarketDataRepository>();
-                var service = new MarketDataService(repo);
+                var cache = provider.GetService<ICacheRepository>();
+                var service = new MarketDataService(repo, cache);
 
                 service.AddOnMalformedRecordEvent((sender, i) => { });
 

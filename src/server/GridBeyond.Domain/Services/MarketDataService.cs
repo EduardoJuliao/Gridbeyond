@@ -7,6 +7,7 @@ using GridBeyond.Domain.EventArgs;
 using GridBeyond.Domain.Interfaces.Repository;
 using GridBeyond.Domain.Interfaces.Services;
 using GridBeyond.Domain.Models;
+using GridBeyond.Domain.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GridBeyond.Domain.Services
@@ -14,13 +15,17 @@ namespace GridBeyond.Domain.Services
     public class MarketDataService : IMarketDataService
     {
         private readonly IMarketDataRepository _repository;
+        private readonly ICacheRepository _cacheRepository;
+
         private event EventHandler<int> OnMalformedRecord;
         private event EventHandler<ValidRecordEventArgs> OnValidRecord;
         private event EventHandler<IEnumerable<InsertDataModel>> OnInsertRecord;
 
-        public MarketDataService(IMarketDataRepository repository)
+        public MarketDataService(IMarketDataRepository repository,
+            ICacheRepository cacheRepository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _cacheRepository = cacheRepository;
         }
 
         public async Task<IEnumerable<DataModel>> GetAllData()
@@ -30,8 +35,14 @@ namespace GridBeyond.Domain.Services
         
         public async Task<IEnumerable<DataModel>> GetLatest()
         {
-            return (await _repository.Get().OrderByDescending(x=> x.Date).Take(50).ToListAsync())
+            if (_cacheRepository.GetCache(CacheKeys.MarketKeys.Latest50, out IEnumerable<DataModel> latest))
+                return latest;
+
+            latest = (await _repository.Get().OrderByDescending(x=> x.Date).Take(50).ToListAsync())
                 .OrderBy(x => x.Date);
+
+            _cacheRepository.SetOrUpdate(latest, CacheKeys.MarketKeys.Latest50);
+            return latest;
         }
 
         public async Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models)
@@ -44,6 +55,8 @@ namespace GridBeyond.Domain.Services
             
             await _repository.Insert(newModels);
             OnInsertRecord?.Invoke(this, newModels);
+
+            _cacheRepository.SetOrUpdate(newModels.OrderByDescending(x => x.Date).Take(50), CacheKeys.MarketKeys.Latest50);
 
             return newModels;
         }

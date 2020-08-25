@@ -25,6 +25,7 @@ namespace GridBeyond.Domain.Tests
             _repoData = new List<MarketData>();
             
             var mock = new Moq.Mock<IMarketDataRepository>();
+            var mockCache = new Moq.Mock<ICacheRepository>();
 
             mock.Setup(x => x.Get())
                 .Returns(() => _repoData.Select(x => new DataModel
@@ -47,7 +48,7 @@ namespace GridBeyond.Domain.Tests
                         {Date = x.Date, MarketPriceEX1 = x.MarketPriceEX1}));
                 });
 
-            _service = new MarketDataService(mock.Object);
+            _service = new MarketDataService(mock.Object, mockCache.Object);
         }
 
         [Test]
