@@ -197,5 +197,30 @@ namespace GridBeyond.Domain.Tests
             Assert.AreEqual(new DateTime(2020, 8, 16, 12, 0, 0), report.HighestValueDate);
             Assert.AreEqual(new DateTime(2020, 8, 14), report.LowestValueDate);
         }
+
+        [Test]
+        public void DuplicateDataWillBeRemoved()
+        {
+            // Arrange
+            var listWithDuplicates = new List<string>
+            {
+                "A",
+                "B",
+                "C",
+                "C",
+                "D",
+                "A"
+            };
+
+            // Act
+            var uniqueList = _service.RemoveDuplicates(listWithDuplicates).ToList();
+
+            // Assert
+            Assert.AreEqual(4, uniqueList.Count());
+            Assert.AreEqual("A", uniqueList[0]);
+            Assert.AreEqual("B", uniqueList[1]);
+            Assert.AreEqual("C", uniqueList[2]);
+            Assert.AreEqual("D", uniqueList[3]);
+        }
     }
 }

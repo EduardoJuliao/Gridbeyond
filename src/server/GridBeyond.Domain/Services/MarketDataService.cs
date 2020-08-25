@@ -61,7 +61,7 @@ namespace GridBeyond.Domain.Services
         {
             var result = new ValidationResult();
 
-            foreach (var record in data.Select((value, i) => new {i, value}))
+            foreach (var record in RemoveDuplicates(data).Select((value, i) => new {i, value}))
             {
                 if (IsValid(record.value, out var date, out var marketPrice))
                 {
@@ -85,6 +85,11 @@ namespace GridBeyond.Domain.Services
             }
 
             return await Task.FromResult(result);
+        }
+
+        public IEnumerable<string> RemoveDuplicates(IEnumerable<string> data)
+        {
+            return data.Distinct();
         }
 
         private ReportData CreateReport(IList<ReportDataGroupModel> data)
