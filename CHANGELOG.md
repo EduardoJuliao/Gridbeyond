@@ -8,6 +8,7 @@
 
 * Cache repository
 * Domain will now filter duplicate entries from the received data before processing.
+* Report search by date.
 
 ### 1.0
 
