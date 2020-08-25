@@ -10,6 +10,8 @@
 * Domain will now filter duplicate entries from the received data before processing.
 * Report search by date.
 * Describe how many records in `GetLatest`.
+* Introduced `version.props` for server side.
+* Added Peak and Quieter hours to Report Data.
 
 [Fixes]
 

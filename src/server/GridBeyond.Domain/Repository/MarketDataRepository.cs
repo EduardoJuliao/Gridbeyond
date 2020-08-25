@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GridBeyond.Domain.Entities;
 using GridBeyond.Domain.Interfaces.Repository;
 using GridBeyond.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GridBeyond.Domain.Repository
 {
@@ -69,18 +70,18 @@ namespace GridBeyond.Domain.Repository
             await _context.SaveChangesAsync();
         }
 
-        public IQueryable<ReportDataGroupModel> GetReportData(DateTime? start = null, DateTime? end = null)
+        public async Task<IList<ReportDataGroupModel>> GetReportData(DateTime? start = null, DateTime? end = null)
         {
-            var query = from record in Get()
-                        group record.MarketPriceEX1 by record.Date.Date
+            var query = (from record in Get()
+                         group record.MarketPriceEX1 by record.Date.Date
                         into g
-                        select new ReportDataGroupModel
-                        {
-                            Date = g.Key,
-                            Average = g.Average(),
-                            Max = g.Max(),
-                            Min = g.Min()
-                        };
+                         select new
+                         {
+                             Date = g.Key,
+                             Average = g.Average(),
+                             Max = g.Max(),
+                             Min = g.Min(),
+                         });
 
             if (start.HasValue)
             {
@@ -89,7 +90,15 @@ namespace GridBeyond.Domain.Repository
                     query = query.Where(x => x.Date <= end);
             }
 
-            return query;
+            return (await query.ToListAsync())
+                .Select(x => new ReportDataGroupModel
+                {
+                    Date = x.Date,
+                    Average = x.Average,
+                    Max = x.Max,
+                    Min = x.Min,
+                    Events = Get(y => y.Date.Date == x.Date).ToList()
+                }).ToList();
         }
     }
 }

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using GridBeyond.Domain.EventArgs;
+using GridBeyond.Domain.Extensions;
 using GridBeyond.Domain.Interfaces.Repository;
 using GridBeyond.Domain.Interfaces.Services;
 using GridBeyond.Domain.Models;
@@ -107,7 +109,7 @@ namespace GridBeyond.Domain.Services
 
         public async Task<ReportData> GetReport(DateTime? start = null, DateTime? end = null)
         {
-            var data = await _repository.GetReportData(start, end).ToListAsync();
+            var data = await _repository.GetReportData(start, end);
 
             if (!data.Any())
                 return new ReportData();
@@ -117,9 +119,15 @@ namespace GridBeyond.Domain.Services
                 AverageValue = data.Average(x => x.Average),
                 HighestValue = data.Max(x => x.Max),
                 LowestValue = data.Min(x => x.Min),
-                LowestValueDate = data.Single(x => x.Min == data.Min(y => y.Min)).Date,
-                HighestValueDate = data.Single(x => x.Max == data.Max(y => y.Max)).Date,
-                TotalRecords = _repository.Count()
+                LowestValueDate = data.First(x => x.Min == data.Min(y => y.Min)).Date,
+                HighestValueDate = data.First(x => x.Max == data.Max(y => y.Max)).Date,
+                TotalRecords = _repository.Count(),
+                PeakQuietPerDate = data.Select(x => new PeakQuiet
+                {
+                    Date = x.Date.Date,
+                    PeakHours = FindPeak(x.Events, x.Date).ToArray(),
+                    QuietHours = FindQuiet(x.Events, x.Date).ToArray()
+                }).ToList()
             };
         }
 
@@ -150,6 +158,44 @@ namespace GridBeyond.Domain.Services
                 return false;
 
             return true;
+        }
+
+        private IEnumerable<DateTime> FindPeak(List<DataModel> source, DateTime currDate)
+        {
+            var maxValue = source.Max(x => x.MarketPriceEX1);
+            foreach(var date in FindValue(source, currDate, maxValue))
+                yield return date;
+        }
+
+        private IEnumerable<DateTime> FindQuiet(List<DataModel> source, DateTime currDate)
+        {
+            var minValue = source.Min(x => x.MarketPriceEX1);
+            foreach (var date in FindValue(source, currDate, minValue))
+                yield return date;
+        }
+
+        private IEnumerable<DateTime> FindValue(List<DataModel> source, DateTime currDate, double valueToFind)
+        {
+            if (source.Count(x => x.MarketPriceEX1 == valueToFind) == 1)
+            {
+                yield return source[0].Date;
+                yield break;
+            }
+
+            var indices = source
+                .Select((data, index) => new { data, index })
+                .Where(x => x.data.MarketPriceEX1 == valueToFind && x.data.Date.Date == currDate.Date)
+                .Select(x => x.index)
+                .ToList();
+
+            var result = indices.GroupWhile((x, y) => y - x == 1)
+                 .Select(x => new { Count = x.Count(), Elements = x })
+                 .ToList();
+
+            var biggestSuccession = result.Last(x => x.Elements.Count() == result.Max(y => y.Count)).Elements;
+
+            foreach (var index in biggestSuccession)
+                yield return source[index].Date;
         }
     }
 }
