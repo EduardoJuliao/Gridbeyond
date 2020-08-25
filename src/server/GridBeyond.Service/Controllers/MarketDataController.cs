@@ -29,9 +29,10 @@ namespace GridBeyond.Service.Controllers
             return await _service.GetAllData();
         }
         
-        [HttpGet("Latest/{records:int?}")]
-        public async Task<IEnumerable<DataModel>> GetLatestMarketData(int? recordsCount = 50)
+        [HttpGet("Latest/{recordsCount:min(1):max(50):int?}")]
+        public async Task<IEnumerable<DataModel>> GetLatestMarketData(int? recordsCount)
         {
+            if (!recordsCount.HasValue) recordsCount = 50;
             return await _service.GetLatest(recordsCount.Value);
         }
 
