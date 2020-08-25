@@ -14,8 +14,7 @@ namespace GridBeyond.Domain.Interfaces.Services
         Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models);
         Task<ValidationResult> ValidData(IEnumerable<string> data);
         IEnumerable<string> RemoveDuplicates(IEnumerable<string> data);
-        Task<ReportData> GetReportDataHistory();
-        Task<ReportData> GetReportDataPeriod(DateTime start, DateTime? end);
+        Task<ReportData> GetReport(DateTime? start = null, DateTime? end = null);
 
         void AddOnMalformedRecordEvent(EventHandler<int> callback);
         void AddOnValidRecord(EventHandler<ValidRecordEventArgs> callback);

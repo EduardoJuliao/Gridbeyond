@@ -105,10 +105,13 @@ namespace GridBeyond.Domain.Services
             return data.Distinct();
         }
 
-        private ReportData CreateReport(IList<ReportDataGroupModel> data)
+        public async Task<ReportData> GetReport(DateTime? start = null, DateTime? end = null)
         {
+            var data = await _repository.GetReportData(start, end).ToListAsync();
+
             if (!data.Any())
                 return new ReportData();
+
             return new ReportData
             {
                 AverageValue = data.Average(x => x.Average),
@@ -118,41 +121,6 @@ namespace GridBeyond.Domain.Services
                 HighestValueDate = data.Single(x => x.Max == data.Max(y => y.Max)).Date,
                 TotalRecords = _repository.Count()
             };
-        }
-        
-        public async Task<ReportData> GetReportDataHistory()
-        {
-            var query = await (from record in _repository.Get()
-                group record.MarketPriceEX1 by record.Date
-                into g
-                select new ReportDataGroupModel
-                {
-                    Date = g.Key,
-                    Average = g.Average(),
-                    Max = g.Max(),
-                    Min = g.Min(),
-                }).ToListAsync();
-
-            return CreateReport(query);
-        }
-
-        public async Task<ReportData> GetReportDataPeriod(DateTime start, DateTime? end)
-        {
-            if (!end.HasValue)
-                end = DateTime.Now;
-            
-            var query = await (from record in _repository.Get(x => x.Date >= start && x.Date <= end)
-                group record.MarketPriceEX1 by record.Date
-                into g
-                select new ReportDataGroupModel
-                {
-                    Date = g.Key,
-                    Average = g.Average(),
-                    Max = g.Max(),
-                    Min = g.Min(),
-                }).ToListAsync();
-
-            return CreateReport(query);
         }
 
         public void AddOnMalformedRecordEvent(EventHandler<int> callback) => OnMalformedRecord += callback;

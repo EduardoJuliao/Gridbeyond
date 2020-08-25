@@ -160,7 +160,7 @@ namespace GridBeyond.Domain.Tests
             Assert.AreEqual(3, _repoData.Count);
         }
 
-        //[Test]
+        [Test]
         public void CanGenerateCorrectReportData()
         {
             // Arrange
@@ -190,7 +190,7 @@ namespace GridBeyond.Domain.Tests
             });
 
             // Act
-            var report = _service.GetReportDataHistory().GetAwaiter().GetResult();
+            var report = _service.GetReport().GetAwaiter().GetResult();
 
             // Assert
             Assert.AreEqual(9, report.LowestValue);

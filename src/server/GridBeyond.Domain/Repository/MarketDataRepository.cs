@@ -68,5 +68,28 @@ namespace GridBeyond.Domain.Repository
             });
             await _context.SaveChangesAsync();
         }
+
+        public IQueryable<ReportDataGroupModel> GetReportData(DateTime? start = null, DateTime? end = null)
+        {
+            var query = from record in Get()
+                        group record.MarketPriceEX1 by record.Date.Date
+                        into g
+                        select new ReportDataGroupModel
+                        {
+                            Date = g.Key,
+                            Average = g.Average(),
+                            Max = g.Max(),
+                            Min = g.Min()
+                        };
+
+            if (start.HasValue)
+            {
+                query = query.Where(x => x.Date >= start);
+                if (end.HasValue)
+                    query = query.Where(x => x.Date <= end);
+            }
+
+            return query;
+        }
     }
 }

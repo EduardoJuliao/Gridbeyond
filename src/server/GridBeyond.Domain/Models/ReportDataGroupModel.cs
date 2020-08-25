@@ -2,7 +2,7 @@ using System;
 
 namespace GridBeyond.Domain.Models
 {
-    internal class ReportDataGroupModel
+    public class ReportDataGroupModel
     {
         public DateTime Date { get; set; }
         public double Average { get; set; }

@@ -76,7 +76,7 @@ namespace GridBeyond.Domain.Tests
             // Act
             var time = Time(async () =>
             {
-                await _service.GetReportDataHistory();
+                await _service.GetReport();
             });
 
             // Assert
@@ -97,7 +97,7 @@ namespace GridBeyond.Domain.Tests
             // Act
             var time = Time(async () =>
             {
-                await _service.GetReportDataHistory();
+                await _service.GetReport();
             });
 
             // Assert
