@@ -29,10 +29,16 @@ namespace GridBeyond.Service.Controllers
             return await _service.GetAllData();
         }
         
-        [HttpGet("latest")]
+        [HttpGet("Latest")]
         public async Task<IEnumerable<DataModel>> GetLatestMarketData()
         {
             return await _service.GetLatest();
+        }
+
+        [HttpGet("Report")]
+        public async Task<ReportData> GenerateHistoryReport()
+        {
+            return await _service.GetReportDataHistory();
         }
 
         [HttpPost]
@@ -55,12 +61,6 @@ namespace GridBeyond.Service.Controllers
             {
                 return BadRequest("Couldn't process the records.");
             }
-        }
-
-        [HttpGet("Report")]
-        public async Task<ReportData> GenerateHistoryReport()
-        {
-            return await _service.GetReportDataHistory();
         }
     }
 }
