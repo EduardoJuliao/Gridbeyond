@@ -264,7 +264,7 @@ dotnet run --project src/server/GridBeyond.Service
 cd src/client/gridbeyond-angular-client; npm i; ng serve -o
 ```
 
-If CMD:
+If `CMD`:
 
 ```CMD
 dotnet run --project src/server/GridBeyond.Service
