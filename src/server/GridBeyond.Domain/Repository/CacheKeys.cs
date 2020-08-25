@@ -5,7 +5,7 @@ namespace GridBeyond.Domain.Repository
     {
         public static class MarketKeys
         {
-            public const string Latest50 = "Latest50Records";
+            public const string LatestRecords = "LatestRecords";
         }
     }
 }

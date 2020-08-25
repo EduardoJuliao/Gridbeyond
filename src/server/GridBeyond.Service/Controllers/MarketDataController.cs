@@ -29,10 +29,10 @@ namespace GridBeyond.Service.Controllers
             return await _service.GetAllData();
         }
         
-        [HttpGet("Latest")]
-        public async Task<IEnumerable<DataModel>> GetLatestMarketData()
+        [HttpGet("Latest/{records:int?}")]
+        public async Task<IEnumerable<DataModel>> GetLatestMarketData(int? recordsCount = 50)
         {
-            return await _service.GetLatest();
+            return await _service.GetLatest(recordsCount.Value);
         }
 
         [HttpGet("Report/{start:datetime?}/{end:datetime?}")]

@@ -33,15 +33,15 @@ namespace GridBeyond.Domain.Services
             return await _repository.Get().ToListAsync();
         }
         
-        public async Task<IEnumerable<DataModel>> GetLatest()
+        public async Task<IEnumerable<DataModel>> GetLatest(int recordsCount)
         {
-            if (_cacheRepository.GetCache(CacheKeys.MarketKeys.Latest50, out IEnumerable<DataModel> latest))
+            if (_cacheRepository.GetCache(CacheKeys.MarketKeys.LatestRecords, out IEnumerable<DataModel> latest))
                 return latest;
 
-            latest = (await _repository.Get().OrderByDescending(x=> x.Date).Take(50).ToListAsync())
+            latest = (await _repository.Get().OrderByDescending(x=> x.Date).Take(recordsCount).ToListAsync())
                 .OrderBy(x => x.Date);
 
-            _cacheRepository.SetOrUpdate(latest, CacheKeys.MarketKeys.Latest50);
+            _cacheRepository.SetOrUpdate(latest, CacheKeys.MarketKeys.LatestRecords);
             return latest;
         }
 
@@ -56,7 +56,7 @@ namespace GridBeyond.Domain.Services
             await _repository.Insert(newModels);
             OnInsertRecord?.Invoke(this, newModels);
 
-            _cacheRepository.SetOrUpdate(newModels.OrderByDescending(x => x.Date).Take(50), CacheKeys.MarketKeys.Latest50);
+            _cacheRepository.SetOrUpdate(newModels.OrderByDescending(x => x.Date).Take(50), CacheKeys.MarketKeys.LatestRecords);
 
             return newModels;
         }
