@@ -31,7 +31,7 @@ namespace GridBeyond.ConsoleClient
                     ShowOptions();
                     var input = Console.ReadLine();
                     int.TryParse(input, out optionChoosen);
-                } while (!new[] { 1, 2, 3 }.Contains(optionChoosen));
+                } while (!new[] { 1, 2, 9 }.Contains(optionChoosen));
 
                 switch (optionChoosen)
                 {
