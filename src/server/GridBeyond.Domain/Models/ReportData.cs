@@ -21,7 +21,6 @@ namespace GridBeyond.Domain.Models
         public double AverageValue { get; set; }
         public int TotalRecords { get; set; }
         public List<PeakQuiet> PeakQuietPerDate { get; set; }
-        
     }
 
     public class PeakQuiet
