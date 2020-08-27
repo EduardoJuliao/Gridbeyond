@@ -12,10 +12,20 @@
 * Describe how many records in `GetLatest`.
 * Introduced `version.props` for server side.
 * Added Peak and Quieter hours to Report Data.
+* Process History endpoint.
 
 [Fixes]
 
 * Fixed a bug in Console Application where won't close when choosing the 9th option.
+
+[Breaking Changes]
+
+* Endpoints have the `api` prefixes.
+
+[General]
+
+* Performance improvements.
+* Better code for better maintainability.
 
 ### 1.0
 
