@@ -19,4 +19,7 @@
     <ProjectReference Include="..\GridBeyond.Domain\GridBeyond.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ExtensionTests\" />
+  </ItemGroup>
 </Project>

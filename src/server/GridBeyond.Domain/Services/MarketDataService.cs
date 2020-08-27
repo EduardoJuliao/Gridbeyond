@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using GridBeyond.Domain.EventArgs;
 using GridBeyond.Domain.Extensions;
@@ -22,6 +20,10 @@ namespace GridBeyond.Domain.Services
         private event EventHandler<int> OnMalformedRecord;
         private event EventHandler<ValidRecordEventArgs> OnValidRecord;
         private event EventHandler<IEnumerable<InsertDataModel>> OnInsertRecord;
+
+        public void AddOnMalformedRecordEvent(EventHandler<int> callback) => OnMalformedRecord += callback;
+        public void AddOnValidRecord(EventHandler<ValidRecordEventArgs> callback) => OnValidRecord += callback;
+        public void AddOnInsertedRecord(EventHandler<IEnumerable<InsertDataModel>> callback) =>  OnInsertRecord += callback;
 
         public MarketDataService(IMarketDataRepository repository,
             ICacheRepository cacheRepository)
@@ -51,7 +53,7 @@ namespace GridBeyond.Domain.Services
         {
             var newModels = models.Where(x =>
                     !_repository.Exists(y => x.Date == y.Date && x.MarketPriceEX1 == y.MarketPriceEX1))
-                .ToArray();
+                    .ToArray();
 
             if (!newModels.Any()) return newModels;
             
@@ -76,9 +78,9 @@ namespace GridBeyond.Domain.Services
         {
             var result = new ValidationResult();
 
-            foreach (var record in RemoveDuplicates(data).Select((value, i) => new {i, value}))
+            foreach (var record in data.RemoveDuplicates().Select((value, i) => new {i, value}))
             {
-                if (IsValid(record.value, out var date, out var marketPrice))
+                if (record.value.IsValid(out var date, out var marketPrice))
                 {
                     var validRecord = new InsertDataModel
                     {
@@ -102,11 +104,6 @@ namespace GridBeyond.Domain.Services
             return await Task.FromResult(result);
         }
 
-        public IEnumerable<string> RemoveDuplicates(IEnumerable<string> data)
-        {
-            return data.Distinct();
-        }
-
         public async Task<ReportData> GetReport(DateTime? start = null, DateTime? end = null)
         {
             var data = await _repository.GetReportData(start, end);
@@ -125,77 +122,10 @@ namespace GridBeyond.Domain.Services
                 PeakQuietPerDate = data.Select(x => new PeakQuiet
                 {
                     Date = x.Date.Date,
-                    PeakHours = FindPeak(x.Events, x.Date).ToArray(),
-                    QuietHours = FindQuiet(x.Events, x.Date).ToArray()
+                    PeakHours = x.Events.FindLatestPeakDuringDay(x.Date).ToArray(),
+                    QuietHours = x.Events.FindLatestQuieterDuringDay(x.Date).ToArray()
                 }).ToList()
             };
-        }
-
-        public void AddOnMalformedRecordEvent(EventHandler<int> callback) => OnMalformedRecord += callback;
-
-        public void AddOnValidRecord(EventHandler<ValidRecordEventArgs> callback) => OnValidRecord += callback;
-
-        public void AddOnInsertedRecord(EventHandler<IEnumerable<InsertDataModel>> callback) =>
-            OnInsertRecord += callback;
-
-        private static bool IsValid(string value, out DateTime date, out double marketPrice)
-        {
-            date = default;
-            marketPrice = default;
-
-            var split = value.Split(',');
-
-            if (split.Length != 2)
-                return false;
-            
-            var formats = new string []{"dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm","dd/MM/yyyy"};
-
-            if (!DateTime.TryParseExact(split[0], formats, CultureInfo.InvariantCulture,
-                DateTimeStyles.None, out date))
-                return false;
-
-            if (!double.TryParse(split[1], out marketPrice))
-                return false;
-
-            return true;
-        }
-
-        private IEnumerable<DateTime> FindPeak(List<DataModel> source, DateTime currDate)
-        {
-            var maxValue = source.Max(x => x.MarketPriceEX1);
-            foreach(var date in FindValue(source, currDate, maxValue))
-                yield return date;
-        }
-
-        private IEnumerable<DateTime> FindQuiet(List<DataModel> source, DateTime currDate)
-        {
-            var minValue = source.Min(x => x.MarketPriceEX1);
-            foreach (var date in FindValue(source, currDate, minValue))
-                yield return date;
-        }
-
-        private IEnumerable<DateTime> FindValue(List<DataModel> source, DateTime currDate, double valueToFind)
-        {
-            if (source.Count(x => x.MarketPriceEX1 == valueToFind) == 1)
-            {
-                yield return source[0].Date;
-                yield break;
-            }
-
-            var indices = source
-                .Select((data, index) => new { data, index })
-                .Where(x => x.data.MarketPriceEX1 == valueToFind && x.data.Date.Date == currDate.Date)
-                .Select(x => x.index)
-                .ToList();
-
-            var result = indices.GroupWhile((x, y) => y - x == 1)
-                 .Select(x => new { Count = x.Count(), Elements = x })
-                 .ToList();
-
-            var biggestSuccession = result.Last(x => x.Elements.Count() == result.Max(y => y.Count)).Elements;
-
-            foreach (var index in biggestSuccession)
-                yield return source[index].Date;
         }
     }
 }

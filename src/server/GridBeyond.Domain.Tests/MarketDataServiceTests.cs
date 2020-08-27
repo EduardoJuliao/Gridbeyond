@@ -44,26 +44,6 @@ namespace GridBeyond.Domain.Tests
         }
 
         [Test]
-        public async Task ValidatorReturnIncorrectLines()
-        {
-            // Arrange
-            var data = new List<string>
-            {
-                "17/08/2020, 50",
-                "17/08/2020,",
-                "17/08/2020, abc",
-                "17/08/2020",
-            };
-
-            // Act
-            var result = await _service.ValidData(data);
-
-            // Assert
-            Assert.AreEqual(3, result.MalformedRecordLine.Count);
-            Assert.AreEqual(1, result.ValidRecord.Count);
-        }
-
-        [Test]
         public async Task EventIsCalledOnMalformedRecords()
         {
             // Arrange
@@ -150,31 +130,6 @@ namespace GridBeyond.Domain.Tests
 
             // Assert
             Assert.AreEqual(3, _inMemoryContext.MarketDatas.Count());
-        }
-
-        [Test]
-        public void DuplicateDataWillBeRemoved()
-        {
-            // Arrange
-            var listWithDuplicates = new List<string>
-            {
-                "A",
-                "B",
-                "C",
-                "C",
-                "D",
-                "A"
-            };
-
-            // Act
-            var uniqueList = _service.RemoveDuplicates(listWithDuplicates).ToList();
-
-            // Assert
-            Assert.AreEqual(4, uniqueList.Count());
-            Assert.AreEqual("A", uniqueList[0]);
-            Assert.AreEqual("B", uniqueList[1]);
-            Assert.AreEqual("C", uniqueList[2]);
-            Assert.AreEqual("D", uniqueList[3]);
         }
 
         [Test]

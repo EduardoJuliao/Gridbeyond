@@ -13,7 +13,6 @@ namespace GridBeyond.Domain.Interfaces.Services
         Task InsertRecord(InsertDataModel model);
         Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models);
         Task<ValidationResult> ValidData(IEnumerable<string> data);
-        IEnumerable<string> RemoveDuplicates(IEnumerable<string> data);
         Task<ReportData> GetReport(DateTime? start = null, DateTime? end = null);
 
         void AddOnMalformedRecordEvent(EventHandler<int> callback);
