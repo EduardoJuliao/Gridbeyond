@@ -39,8 +39,8 @@ namespace GridBeyond.Domain.Services
         
         public async Task<IEnumerable<DataModel>> GetLatest(int recordsCount)
         {
-            if (_cacheRepository.GetCache(CacheKeys.MarketKeys.LatestRecords + ":" + recordsCount, out IEnumerable<DataModel> latest))
-                return latest;
+            if (_cacheRepository.GetCache(CacheKeys.MarketKeys.LatestRecords, out IEnumerable<DataModel> latest))
+                return latest.OrderByDescending(x => x.Date).Take(recordsCount);
 
             latest = (await _repository.Get().OrderByDescending(x=> x.Date).Take(recordsCount).ToListAsync())
                 .OrderBy(x => x.Date);
