@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using GridBeyond.Domain.Interfaces.Services;
 using GridBeyond.Domain.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GridBeyond.Service.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class MarketDataController : ControllerBase
     {
         private readonly IMarketDataService _service;
