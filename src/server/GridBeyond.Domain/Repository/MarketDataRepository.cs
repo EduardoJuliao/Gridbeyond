@@ -100,5 +100,18 @@ namespace GridBeyond.Domain.Repository
                     Events = Get(y => y.Date.Date == x.Date).ToList()
                 }).ToList();
         }
+
+        public async Task<IEnumerable<InsertDataModel>> Exists(IEnumerable<InsertDataModel> source)
+        {
+            var dates = source.Select(x => x.Date.Date).Distinct();
+
+            var existingEntries = await Get(x => dates.Contains(x.Date.Date))
+                .ToListAsync();
+
+            return from existing in existingEntries
+                   join model in source on new { existing.MarketPriceEX1, existing.Date }
+                                   equals new { model.MarketPriceEX1, model.Date }
+                   select model;
+        }
     }
 }

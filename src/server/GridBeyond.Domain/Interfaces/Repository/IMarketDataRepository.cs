@@ -15,6 +15,7 @@ namespace GridBeyond.Domain.Interfaces.Repository
         Task<IList<ReportDataGroupModel>> GetReportData(DateTime? start = null, DateTime? end = null);
         int Count();
         bool Exists(Expression<Func<MarketData, bool>> expression);
+        Task<IEnumerable<InsertDataModel>> Exists(IEnumerable<InsertDataModel> source);
         Task Insert(IEnumerable<InsertDataModel> models);
         Task Insert(InsertDataModel models);
     }

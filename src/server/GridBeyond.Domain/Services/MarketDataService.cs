@@ -51,16 +51,7 @@ namespace GridBeyond.Domain.Services
 
         public async Task<IEnumerable<InsertDataModel>> InsertMultiple(IEnumerable<InsertDataModel> models)
         {
-            var dates = models.Select(x => x.Date.Date).Distinct();
-
-            var existingEntries = await _repository
-                .Get(x => dates.Contains(x.Date.Date))
-                .ToListAsync();
-
-            var existingModels = from existing in existingEntries
-                                  join model in models on new { existing.MarketPriceEX1, existing.Date }
-                                                   equals new { model.MarketPriceEX1, model.Date }
-                                  select model;
+            var existingModels = await _repository.Exists(models);
 
             var newModels = models.Except(existingModels);
 
