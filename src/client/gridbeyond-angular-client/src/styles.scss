@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 * {
-  font-family: "Courier New", Courier, monospace;
+  font-family: Roboto, "Courier New", Courier, monospace;
 }
 
 body {
@@ -9,4 +9,9 @@ body {
 
 .container {
   padding: 5px;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url("./assets/fonts/Roboto-Medium.ttf");
 }
