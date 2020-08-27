@@ -1,0 +1,28 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<div class="marketData" *ngIf="!isLoading && reportData">
+  <div class="marketDataInfo">
+    <b>Average Value: </b>
+    <div>{{reportData.averageValue}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>Highest Value:</b>
+    <div>{{reportData.highestValue}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>When reached Highest Value:</b>
+    <div>{{reportData.highestValueDate| date: dateFormat}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>Lowest Value:</b>
+    <div>{{reportData.lowestValue}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>When reached Lowest Value:</b>
+    <div>{{reportData.lowestValueDate | date: dateFormat}}</div>
+  </div>
+  <div class="marketDataInfo">
+    <b>Total Records:</b>
+    <div>{{reportData.totalRecords}}</div>
+  </div>
+</div>

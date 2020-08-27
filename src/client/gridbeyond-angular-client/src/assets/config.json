@@ -1,5 +1,8 @@
 {
   "api": {
     "baseUrl": "http://localhost:5000/api"
+  },
+  "config": {
+    "dateTimeFormat": "dd/MM/yyyy hh:mm:ss"
   }
 }

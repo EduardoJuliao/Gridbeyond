@@ -1,9 +1,9 @@
 import { MarketDataComponentNotifierService } from './../../../Shared/Services/market-data-component-notifier.service';
-import { IReportDataModel } from './../../../Shared/Models/IReportDataModel';
-import { IMarketDataModel } from './../../../Shared/Models/IMarketDataModel';
 import { MarketDataService } from './../../../Shared/Services/market-data.service';
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import config from '../../../../assets/config.json';
+import * as CanvasJS from '../../../../assets/canvasjs/canvasjs.min.js';
 
 @Component({
   selector: 'app-market-data',
@@ -12,10 +12,8 @@ import { DatePipe } from '@angular/common';
 })
 export class MarketDataComponent implements OnInit {
 
-
   chartData = {};
-  reportData = {};
-  readonly dateFormat: string = 'dd/MM/yyyy hh:mm:ss';
+  readonly dateFormat: string = config.config.dateTimeFormat;
 
   options = {
     responsive: true,
@@ -37,20 +35,25 @@ export class MarketDataComponent implements OnInit {
   populate() {
     this.service.GetLatestData()
       .subscribe(result => {
-        this.chartData = {
-          labels: result.map(x => this.datePipe.transform(x.date, this.dateFormat)),
-          datasets: [
-            {
-              label: "Showing latests 50",
-              data: result.map(x => x.marketPriceEX1)
-            }
-          ]
-        };
-      });
+        var data: {}[] = result.map(r => ({
+          x: new Date(r.date),
+          y: r.marketPriceEX1
+        }));
 
-    this.service.GetReportData()
-      .subscribe(result => {
-        this.reportData = result;
+        let chart = new CanvasJS.Chart("chartContainer", {
+          zoomEnabled: true,
+          animationEnabled: true,
+          exportEnabled: true,
+          title: {
+            text: `Latest data from ${this.datePipe.transform(result[0].date, this.dateFormat)}`
+          },
+          data: [{
+            type: "line",
+            dataPoints: data,
+          }]
+        });
+
+        chart.render();
       });
   }
 }

@@ -12,13 +12,19 @@ import { DatePipe } from '@angular/common';
 import { HeaderComponent } from './Core/Components/header/header.component';
 import { FileUploadComponent } from './Core/Components/file-upload/file-upload.component';
 import { Ng2IziToastModule } from 'ng2-izitoast';
+import { LatestRecordsComponent } from './Core/Components/latest-records/latest-records.component';
+import { LoaderComponent } from './Shared/Components/loader/loader.component';
+import { ReportDataComponent } from './Core/Components/report-data/report-data.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MarketDataComponent,
     HeaderComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    LatestRecordsComponent,
+    LoaderComponent,
+    ReportDataComponent
   ],
   imports: [
     BrowserModule,

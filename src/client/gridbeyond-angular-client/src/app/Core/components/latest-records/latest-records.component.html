@@ -1,0 +1,14 @@
+<app-loader *ngIf="isLoading"></app-loader>
+
+<table class="table table-striped" *ngIf="!isLoading">
+  <thead>
+    <td>Date</td>
+    <td>Market Price Value</td>
+  </thead>
+  <tbody>
+    <tr *ngFor="let record of latest">
+      <td>{{record.date | date: dateFormat}}</td>
+      <td>{{record.marketPriceEX1}}</td>
+    </tr>
+  </tbody>
+</table>
