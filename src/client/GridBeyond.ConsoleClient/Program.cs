@@ -24,7 +24,7 @@ namespace GridBeyond.ConsoleClient
                 .CreateLogger();
 
             var optionChoosen = 0;
-            while(optionChoosen != 9)
+            while (optionChoosen != 9)
             {
                 do
                 {
@@ -63,7 +63,7 @@ namespace GridBeyond.ConsoleClient
 
             log.Information("Reading from file...");
             var csvRecords = Task.Run(() => ReadFile(path)).GetAwaiter().GetResult();
-            log.Information($"{csvRecords.Count()} recored read.");
+            log.Information($"{csvRecords.Count()} recorded read.");
 
             log.Information("Uploading to server...");
             var result = Task.Run(() => HttpHelper.SendRecords(csvRecords)).GetAwaiter().GetResult();
@@ -86,8 +86,20 @@ namespace GridBeyond.ConsoleClient
             log.Information("============REPORT============");
             log.Information($"Total records: {report.TotalRecords}");
             log.Information($"Average Value: {report.AverageValue}");
-            log.Information($"Highest Value: {report.HighestValue} on {report.HighestValueDate}");
-            log.Information($"Lowest Value: {report.LowestValue} on {report.LowestValueDate}");
+            log.Information($"Highest Value: {report.HighestValue}");
+            log.Information($"Reached at:");
+            foreach (DateTime peak in report.PeakQuietPerDate
+                .Where(x => x.Date == report.HighestValueDate)
+                .SelectMany(x => x.PeakHours))
+                log.Information($"\t{peak.ToString("f")}");
+
+            log.Information($"Lowest Value: {report.LowestValue}");
+            log.Information($"Reached at:");
+            foreach (DateTime quiet in report.PeakQuietPerDate
+                .Where(x => x.Date == report.LowestValueDate)
+                .SelectMany(x => x.QuietHours))
+                log.Information($"\t{quiet.ToString("f")}");
+
             log.Information("============REPORT============");
         }
 
