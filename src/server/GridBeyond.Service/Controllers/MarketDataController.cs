@@ -50,7 +50,7 @@ namespace GridBeyond.Service.Controllers
             {
                 var newRecords = await _service.InsertMultiple(result.ValidRecord);
                 await _processHistoryService.SaveProcess(result.ValidRecord.Count,
-                    result.MalformedRecordLine.Count, newRecords.Length,
+                    result.MalformedRecordLine.Count, newRecords.Count(),
                     csv.Count);
                 return Ok(new
                 {

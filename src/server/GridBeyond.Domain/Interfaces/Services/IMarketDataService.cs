@@ -11,7 +11,7 @@ namespace GridBeyond.Domain.Interfaces.Services
         Task<IEnumerable<DataModel>> GetAllData();
         Task<IEnumerable<DataModel>> GetLatest(int recordsCount);
         Task InsertRecord(InsertDataModel model);
-        Task<InsertDataModel[]> InsertMultiple(IEnumerable<InsertDataModel> models);
+        Task<IEnumerable<InsertDataModel>> InsertMultiple(IEnumerable<InsertDataModel> models);
         Task<ValidationResult> ValidData(IEnumerable<string> data);
         Task<ReportData> GetReport(DateTime? start = null, DateTime? end = null);
 
