@@ -341,5 +341,50 @@ namespace GridBeyond.Domain.Tests.ExtensionTests
             Assert.AreEqual(2, quieter.Count());
             Assert.IsTrue(quieter.SequenceEqual(new[] { new DateTime(2020, 8, 27, 13, 45, 0), new DateTime(2020, 8, 27, 13, 50, 0) }));
         }
+
+        [Test]
+        public void PeakValueReturnsCorrectHourWhenHaveOneEntry()
+        {
+            // Arrange
+            var peakValue = 50;
+
+            var data = new List<DataModel>
+            {
+
+                new DataModel
+                {
+                    Date = new DateTime(2020, 8,27, 13,30,0),
+                    MarketPriceEX1 = 40
+                },
+
+                new DataModel
+                {
+                    Date = new DateTime(2020, 8,27, 13,35,0),
+                    MarketPriceEX1 = peakValue
+                },
+                new DataModel
+                {
+                    Date = new DateTime(2020, 8,27, 13,40,0),
+                    MarketPriceEX1 = 10
+                },
+                new DataModel
+                {
+                    Date = new DateTime(2020, 8,27, 13,45,0),
+                    MarketPriceEX1 = 40
+                },
+                new DataModel
+                {
+                    Date = new DateTime(2020, 8,27, 13,50,0),
+                    MarketPriceEX1 = 40
+                },
+            };
+
+            // Act
+            var peak = data.FindLatestPeakDuringDay(new DateTime(2020, 8, 27)).ToList();
+
+            // Assert
+            Assert.AreEqual(1, peak.Count());
+            Assert.AreEqual(new DateTime(2020, 8, 27, 13, 35, 0), peak[0]);
+        }
     }
 }

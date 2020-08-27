@@ -38,6 +38,7 @@ namespace GridBeyond.Service.Controllers
         [HttpGet("Report/{start:datetime?}/{end:datetime?}")]
         public async Task<ReportData> GenerateHistoryReport(DateTime? start = null, DateTime? end = null)
         {
+            var c = await _service.GetReport(start, end);
             return await _service.GetReport(start, end);
         }
 

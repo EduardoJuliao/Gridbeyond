@@ -18,7 +18,8 @@ namespace GridBeyond.Domain.Extensions
         {
             if (ordered.Count(x => x.MarketPriceEX1 == valueToFind) == 1)
             {
-                yield return ordered.ElementAt(0).Date;
+                var index = ordered.ToList().FindIndex(x => x.MarketPriceEX1 == valueToFind);
+                yield return ordered.ElementAt(index).Date;
                 yield break;
             }
 
