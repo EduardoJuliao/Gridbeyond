@@ -13,6 +13,9 @@
 * Introduced `version.props` for server side.
 * Added Peak and Quieter hours to Report Data.
 * Process History endpoint.
+* Better handling of loading data in the web app.
+* CanvasJS for better data visualization and export options.
+* Table containing the last 50 records stored in the server for quick visualization
 
 [Fixes]
 
