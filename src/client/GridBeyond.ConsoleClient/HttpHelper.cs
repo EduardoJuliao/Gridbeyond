@@ -18,9 +18,9 @@ namespace GridBeyond.ConsoleClient
         {
             var json = JsonConvert.SerializeObject(marketData);
             var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-            
+
             HttpResponseMessage response = await Client.PostAsync(
-                "marketdata", stringContent);
+                "api/marketdata", stringContent);
             response.EnsureSuccessStatusCode();
 
             var responseJson = await response.Content.ReadAsStringAsync();
@@ -34,12 +34,12 @@ namespace GridBeyond.ConsoleClient
             if (start.HasValue)
             {
                 query += "/" + start.Value.ToLongDateString();
-                if(end.HasValue)
+                if (end.HasValue)
                     query += "/" + end.Value.ToLongDateString();
             }
 
             HttpResponseMessage response = await Client.GetAsync(
-                "marketdata/report" + query);
+                "api/marketdata/report" + query);
 
             var responseJson = await response.Content.ReadAsStringAsync();
 
